@@ -10,7 +10,7 @@ function initialize() {
 	map = new google.maps.Map(document.getElementById('map-canvas'),
 		mapOptions);
 
-	readFile('static/1976.txt');
+	readFile('static/all_events.txt');
 
 	function readFile(filename) {
 		var request = new XMLHttpRequest();
