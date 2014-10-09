@@ -1,4 +1,4 @@
-#!"/Users/lizstarin/Workspace/earthquake map/venv/bin/python2.7"
+#!/Users/lizstarin/Workspace/earthquake_map/venv/bin/python2.7
 
 # -*- coding: utf-8 -*-
 import re

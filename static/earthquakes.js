@@ -42,13 +42,21 @@ function initialize() {
 	}
 
 	function plotPoints(earthquakes) {
+		var i = 0;
 		earthquakes.forEach(function(eq) {
+			i++;
 			var latitude = parseFloat(eq[0].substring(27, 32));
 			var longitude = parseFloat(eq[0].substring(34, 40));
 			var latLng = new google.maps.LatLng(latitude, longitude);
+			var icon = {
+				url: '/static/' + i.toString() + '.png',
+				scaledSize: new google.maps.Size(20, 20) 
+			};
+
 	    var marker = new google.maps.Marker({
 	      position: latLng,
-	      map: map
+	      map: map,
+	      icon: icon
 	    });
 		})
 	}
