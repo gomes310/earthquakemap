@@ -42,14 +42,13 @@ function initialize() {
 	}
 
 	function plotPoints(earthquakes) {
-		var i = 0;
 		earthquakes.forEach(function(eq) {
-			i++;
 			var latitude = parseFloat(eq[0].substring(27, 32));
 			var longitude = parseFloat(eq[0].substring(34, 40));
 			var latLng = new google.maps.LatLng(latitude, longitude);
+			var eventName = eq[1].substring(0, 15).trim();
 			var icon = {
-				url: '/static/' + i.toString() + '.png',
+				url: '/static/' + eventName + '.png',
 				scaledSize: new google.maps.Size(20, 20) 
 			};
 
