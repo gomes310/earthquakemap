@@ -1,5 +1,5 @@
 var map, data;
-var MIN_BEACHBALL_ZOOM = 5;
+var ZOOM_THRESH = 5;
 
 function initialize() {
 	var mapOptions = {
@@ -12,7 +12,7 @@ function initialize() {
 		mapOptions);
 
 	var zoomLevel = map.getZoom();
-	if(zoomLevel < MIN_BEACHBALL_ZOOM) {
+	if(zoomLevel < ZOOM_THRESH) {
 		setHeatMap(earthquakes);
 	} else {
 		plotPoints(earthquakes);
@@ -21,27 +21,22 @@ function initialize() {
 	google.maps.event.addListener(map, 'zoom_changed', function() {
 		var oldZoomLevel = zoomLevel;
 		zoomLevel = map.getZoom();
-		sendBounds();
 
-		if(oldZoomLevel < MIN_BEACHBALL_ZOOM && zoomLevel >= MIN_BEACHBALL_ZOOM) {
+		if(oldZoomLevel < ZOOM_THRESH && zoomLevel >= ZOOM_THRESH) {
 			plotPoints(earthquakes);
 		}
 
-		if(oldZoomLevel >= MIN_BEACHBALL_ZOOM && zoomLevel < MIN_BEACHBALL_ZOOM) {
+		if(oldZoomLevel >= ZOOM_THRESH && zoomLevel < ZOOM_THRESH) {
 			setHeatMap(earthquakes);
 		}
   });
 
-  google.maps.event.addListener(map, 'idle', queryEvents);
+  google.maps.event.addListener(map, 'idle', sendMapBounds);
 
-  function sendBounds() {
+  function sendMapBounds() {
   	var request = new XMLHttpRequest();
 		request.open("get", "/" + "?bounds=" + map.getBounds());
 		request.send();
-  }
-
-  function queryEvents() {
-  	var bounds = map.getBounds();
   }
 
 	function plotPoints(earthquakes) {
@@ -49,6 +44,7 @@ function initialize() {
 			var latitude = eq[2];
 			var longitude = eq[3];
 			var latLng = new google.maps.LatLng(latitude, longitude);
+
 			var eventName = eq[1];
 			var icon = {
 				url: '/static/beachballs/' + eventName + '.png',

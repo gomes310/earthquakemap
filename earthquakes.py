@@ -1,4 +1,5 @@
 import sqlite3
+import types
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from contextlib import closing
 
@@ -20,15 +21,22 @@ def init_db():
 
 @app.route('/')
 def show_map():
-	d = request.args.get('bounds')
-	print d
-	if type(d) != "None":
-		lat_min = d[0][0]
-		long_min = d[0][1]
-		lat_max = d[1][0]
-		long_max = d[1][1]
+	bounds = request.args.get('bounds')
+	if type(bounds) != types.NoneType:
+		b = eval(bounds)
+		lat_min = str(b[0][0])
+		long_min = str(b[0][1])
+		lat_max = str(b[1][0])
+		long_max = str(b[1][1])
+	else:
+		lat_min = str(-90)
+		long_min = str(-180)
+		lat_max = str(90)
+		long_max = str(180)
+
 	db = connect_db()
-	earthquakes = db.execute('select * from earthquakes')
+	earthquakes_cursor = db.execute('select * from earthquakes where latitude between ' + lat_min + ' and ' + lat_max + ' and longitude between ' + long_min + ' and ' + long_max)
+	earthquakes = earthquakes_cursor.fetchall()
 	return render_template('index.html', earthquakes=earthquakes)
 
 if __name__ == '__main__':
