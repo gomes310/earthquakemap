@@ -30,9 +30,10 @@ def draw_beachballs():
 	for event in list(data):
 		try:
 			Beachball(event[3], facecolor='r', outfile='static/' + event[0] + '.png')
-		except IndexError:
+		except: # IndexError:
+			print "Error for event " + event[0]
 			Beachball(event[4], facecolor='r', outfile='static/' + event[0] + '.png')
-			print "One of the moment tensor components was 0. Using strike/dip/rake values for event" + event[0]
+			# print "One of the moment tensor components was 0. Using strike/dip/rake values for event" + event[0]
 
 def add_db_records(db):
 	data = parse_data()

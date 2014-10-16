@@ -1,7 +1,6 @@
 import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, abort, render_template, flash
 from contextlib import closing
-from data_handler import parse_data, draw_beachballs, add_db_records
 
 DATABASE = '/tmp/earthquakes.db'
 DEBUG = True
@@ -21,15 +20,16 @@ def init_db():
 
 @app.route('/')
 def show_map():
+	d = request.args.get('bounds')
+	print d
+	if type(d) != "None":
+		lat_min = d[0][0]
+		long_min = d[0][1]
+		lat_max = d[1][0]
+		long_max = d[1][1]
 	db = connect_db()
 	earthquakes = db.execute('select * from earthquakes')
 	return render_template('index.html', earthquakes=earthquakes)
-
-# parse_data()
-# draw_beachballs()
-
-# db = connect_db()
-# add_db_records(db)
 
 if __name__ == '__main__':
     app.run()
