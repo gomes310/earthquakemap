@@ -51,10 +51,13 @@ function initialize() {
 			var longitude = eq[3];
 			var latLng = new google.maps.LatLng(latitude, longitude);
 
+			var markerSize = .04 * Math.pow(eq[6], 4)
+			// var markerColorR = (700 - eq[7]) * 255 / 700
+
 			var eventName = eq[1];
 			var icon = {
-				url: '/static/beachballs/' + eventName + '.png',
-				scaledSize: new google.maps.Size(30, 30) 
+				url: '/static/beachballs2/' + eventName + '.svg',
+				scaledSize: new google.maps.Size(markerSize, markerSize) 
 			};
 
 	    var marker = new google.maps.Marker({

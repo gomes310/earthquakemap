@@ -5,5 +5,7 @@ create table earthquakes (
   latitude real not null,
   longitude real not null,
   strike_dip_rake text not null,
-  moment_tensor text not null
+  moment_tensor text not null,
+  magnitude real not null,
+  depth real not null
 );

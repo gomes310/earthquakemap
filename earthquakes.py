@@ -26,7 +26,6 @@ def query_db():
 def get_earthquakes():
 	earthquakes = query_db()
 	result = json.JSONEncoder().encode(earthquakes)
-	print result
 	return result
 
 @app.route('/')
