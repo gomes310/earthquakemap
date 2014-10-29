@@ -25,14 +25,40 @@ def parse_data():
 	data = zip(event_names, latitudes, longitudes, moment_tensors, strike_dip_rakes, depths, magnitudes)
 	return data
 
+def parse_data_for_fusion_table():
+	raw_data = open('static/all_events.txt').readlines()
+	earthquakes = list(chunker(raw_data, 5))
+	
+	fusion_table = open('all_events_parsed.csv', 'w')
+	fusion_table.write('Event_name,Location,Depth,Magnitude\n')
+
+	for eq in earthquakes:
+		event_name = eq[1][:16].strip()
+
+		line_one = eq[0].strip().split()
+		latitude = line_one[3]
+		longitude = line_one[4]
+		depth = line_one[5]
+		magnitude = line_one[6]
+
+		line = ','.join([event_name, latitude + ' ' + longitude, depth, magnitude]) + '\n'
+		fusion_table.write(line)
+
 def draw_beachballs():
 	data = parse_data()
 	for event in list(data):
+		if event[5] < 70:
+			face_color = '#ff0000'
+		elif event[5] > 300:
+			face_color = '#0000ff'
+		else:
+			face_color = '#ffff00'
+
 		try:
-			Beachball(event[3], facecolor='r', width=100, outfile='static/beachballs2/' + event[0] + '.svg')
+			Beachball(event[3], facecolor=face_color, width=100, outfile='static/beachballs4/' + event[0] + '.png')
 		except: # IndexError:
 			print "Error for event " + event[0]
-			Beachball(event[4], facecolor='r', width=100, outfile='static/beachballs2/' + event[0] + '.svg')
+			Beachball(event[4], facecolor=face_color, width=100, outfile='static/beachballs4/' + event[0] + '.png')
 			# print "One of the moment tensor components was 0. Using strike/dip/rake values for event" + event[0]
 
 def add_db_records(db):

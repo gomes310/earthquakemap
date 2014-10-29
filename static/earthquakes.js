@@ -5,13 +5,13 @@ var ZOOM_THRESH = 5;
 
 function initialize() {
 	var mapOptions = {
-		zoom: 2,
+		zoom: 5,
 		center: new google.maps.LatLng(0, 0),
 		mapTypeId: google.maps.MapTypeId.TERRAIN
 	};
 
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-	setHeatMap();
+	setFusionTableLayer();
 
 	google.maps.event.addListener(map, 'idle', resetMap);
 
@@ -19,15 +19,14 @@ function initialize() {
 		sendMapBounds();
 		zoom = map.getZoom();
 
-		if(zoom > ZOOM_THRESH) {
-			plotPoints();
-		} else {
+		if(zoom <= ZOOM_THRESH) {
 			clearPoints();
 		}
 	}
 
   function sendMapBounds() {
   	var bounds = map.getBounds().toUrlValue().split(",");  // lat_min,long_min,lat_max,long_max
+  	console.log(bounds);
   	var lat_min = bounds[0];
   	var long_min = bounds[1];
   	var lat_max = bounds[2];
@@ -41,6 +40,9 @@ function initialize() {
   	request.onreadystatechange = function() {
   		if (request.readyState == 4) {
   			earthquakes = JSON.parse(request.responseText);
+  			if(zoom > ZOOM_THRESH) {
+  				plotPoints();
+  			}
     	}
   	}
   }
@@ -51,13 +53,13 @@ function initialize() {
 			var longitude = eq[3];
 			var latLng = new google.maps.LatLng(latitude, longitude);
 
-			var markerSize = .04 * Math.pow(eq[6], 4)
-			// var markerColorR = (700 - eq[7]) * 255 / 700
+			var markerSize = .04 * Math.pow(eq[6], 4);
 
 			var eventName = eq[1];
 			var icon = {
 				url: '/static/beachballs2/' + eventName + '.svg',
-				scaledSize: new google.maps.Size(markerSize, markerSize) 
+				scaledSize: new google.maps.Size(markerSize, markerSize),
+				anchor: new google.maps.Point(markerSize / 2, markerSize / 2)
 			};
 
 	    var marker = new google.maps.Marker({
@@ -74,6 +76,33 @@ function initialize() {
 		for (var i = 0; i < markers.length; i++) {
     	markers[i].setMap(null);
   	}
+	}
+
+	function setFusionTableLayer() {
+		layer = new google.maps.FusionTablesLayer({
+			query: {
+      	select: 'Location',
+      	from: '1cWhh3dEaejEtV4TqnV0djQaepkAJ-ASmWDAZuuTt'
+    	},
+			styles: [{
+			  markerOptions: {
+			    iconName: 'small_yellow'
+			  }
+			}, 
+			{
+			 	where: 'Depth < 70',
+			  markerOptions: {
+			    iconName: 'small_red'
+			  }
+			}, 
+			{
+			 	where: 'Depth > 300',
+			    markerOptions: {
+			      iconName: 'small_blue'
+			    }
+			}]
+		});
+  	layer.setMap(map);
 	}
 
 	function setHeatMap() {

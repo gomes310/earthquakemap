@@ -1,0 +1,3 @@
+from data_handler import parse_data_for_fusion_table
+
+parse_data_for_fusion_table()
